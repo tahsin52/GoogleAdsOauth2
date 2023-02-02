@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <div id="g_id_onload"
+     data-client_id="921922143262-rginaqvt1qoj4q925tkc95vaf5k88aj7.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-callback="handleLogin"
+     data-auto_select="true"
+     data-itp_support="true">
+    </div>
+
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="rectangular"
+         data-theme="outline"
+         data-text="signin_with"
+         data-size="large"
+         data-logo_alignment="left">
+    </div>
+
+    <h1>Hello My AWESOME</h1>
+
+    <button onclick="onLinkAdsAccount()">Link Google Ads Account</button>
+    <button onclick="listAccessibleCustomers()">List Accessible Customers</button>
+    <script>
+        function handleLogin(response) {
+        localStorage.setItem('token', response.credential);
+        listAccessibleCustomers();
+    }
+
+    SERVER_URL = 'http://127.0.0.1:5000';
+    function onLinkAdsAccount() {
+        token = localStorage.getItem('token');
+        window.location.href = `${SERVER_URL}/authorize?token=${token}`;
+    }
+    </script>
+    <script>
+        function listAccessibleCustomers() {
+            const url = `${SERVER_URL}/customers`;
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader("token", localStorage.getItem('token'));
+
+            xhr.send();
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.response);
+                    if ("name" in response  && response.name ==='INVALID_REFRESH_TOKEN') {
+                    } else {
+                        console.log(response);
+                    }
+                }
+
+            }
+        }
+    </script>
+</body>
+</html>
